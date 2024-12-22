@@ -213,36 +213,27 @@ codes = File.readlines('day-21/input.txt').map(&:chomp)
 total_complexity = 0
 
 codes.each do |code|
-  pp code
-
-  robot_0_position = 'A'
+  keypad_robot_position = 'A'
   robot_1_presses_needed = ''
   code.each_char do |char|
-    robot_1_presses_needed += numeric_keypad_best_path(robot_0_position, char)
+    robot_1_presses_needed += numeric_keypad_best_path(keypad_robot_position, char)
     robot_1_presses_needed += 'A'
-    robot_0_position = char
+    keypad_robot_position = char
   end
-  pp robot_1_presses_needed
 
-  robot_1_position = 'A'
-  robot_2_presses_needed = ''
-  robot_1_presses_needed.each_char do |char|
-    robot_2_presses_needed += arrow_keypad_best_path(robot_1_position, char)
-    robot_2_presses_needed += 'A'
-    robot_1_position = char
+  prev_robot_presses_needed = robot_1_presses_needed
+  2.times do
+    robot_position = 'A'
+    next_robot_presses_needed = ''
+    prev_robot_presses_needed.each_char do |char|
+      next_robot_presses_needed += arrow_keypad_best_path(robot_position, char)
+      next_robot_presses_needed += 'A'
+      robot_position = char
+    end
+    prev_robot_presses_needed = next_robot_presses_needed
   end
-  pp robot_2_presses_needed
 
-  robot_2_position = 'A'
-  robot_3_presses_needed = ''
-  robot_2_presses_needed.each_char do |char|
-    robot_3_presses_needed += arrow_keypad_best_path(robot_2_position, char)
-    robot_3_presses_needed += 'A'
-    robot_2_position = char
-  end
-  pp robot_3_presses_needed
-
-  total_complexity += complexity(code, robot_3_presses_needed)
+  total_complexity += complexity(code, prev_robot_presses_needed)
 end
 
 p total_complexity
