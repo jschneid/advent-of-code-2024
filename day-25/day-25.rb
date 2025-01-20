@@ -7,11 +7,7 @@ def key_pin_height(key, column)
 end
 
 def key_pin_heights(key)
-  pin_heights = []
-  5.times do |column|
-    pin_heights << key_pin_height(key, column)
-  end
-  pin_heights
+  (0..4).map { |column| key_pin_height(key, column) }
 end
 
 def lock_pin_height(lock, column)
@@ -19,44 +15,19 @@ def lock_pin_height(lock, column)
 end
 
 def lock_pin_heights(lock)
-  pin_heights = []
-  5.times do |column|
-    pin_heights << lock_pin_height(lock, column)
-  end
-  pin_heights
+  (0..4).map { |column| lock_pin_height(lock, column) }
 end
 
 def fits?(key_map, lock_map)
-  5.times do |column|
-    return false if key_map[column] + lock_map[column] > 5
-  end
-  true
+  (0..4).all? { |column| key_map[column] + lock_map[column] <= 5 }
 end
 
 def fit_count(key_maps, lock_maps)
-  fit_count = 0
-  key_maps.each do |key_map|
-    lock_maps.each do |lock_map|
-      fit_count += 1 if fits?(key_map, lock_map)
-    end
-  end
-  fit_count
+  key_maps.product(lock_maps).count { |key_map, lock_map| fits?(key_map, lock_map) }
 end
 
 def parse_input(lines)
-  keys = []
-  locks = []
-  objects = lines.each_slice(8)
-
-  objects.map { |object| object[..6] }.each do |object|
-    if key?(object)
-      keys << object
-    else
-      locks << object
-    end
-  end
-
-  [keys, locks]
+  lines.each_slice(8).map { |object| object[..6] }.partition { |object| key?(object) }
 end
 
 lines = File.readlines('day-25/input.txt').map(&:chomp)
