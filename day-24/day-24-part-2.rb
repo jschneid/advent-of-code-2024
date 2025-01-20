@@ -38,33 +38,6 @@ def execute(gates)
   result
 end
 
-def ancestor_wires(gate, gates_by_output_wire)
-  ancestors = []
-
-  gate.input_wires.each do |wire|
-    ancestors << wire
-    ancestors += ancestor_wires(gates_by_output_wire[wire], gates_by_output_wire) if gates_by_output_wire.key?(wire)
-  end
-
-  ancestors.uniq
-end
-
-def wires_binary_value(prefix, wires)
-  value = 0
-  place = 0
-  loop do
-    wire_id = "#{prefix}#{format('%02d', place)}"
-    return value unless wires.key?(wire_id)
-
-    value += (wires[wire_id] << place)
-    place += 1
-  end
-end
-
-def expected_binary_sum(addend_x, addend_y)
-  (addend_x + addend_y).to_s(2)
-end
-
 lines = File.readlines('day-24/input.txt').map(&:chomp)
 
 gates_by_output_wire = {}
